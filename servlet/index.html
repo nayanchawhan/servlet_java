@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intrusion Detection System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --surface-color: rgba(30, 41, 59, 0.7);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #3b82f6;
+            --accent-hover: #2563eb;
+            --danger: #ef4444;
+            --danger-hover: #dc2626;
+            --border: rgba(255, 255, 255, 0.1);
+            --border-highlight: rgba(255, 255, 255, 0.2);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(239, 68, 68, 0.1) 0px, transparent 50%);
+            background-attachment: fixed;
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1000px;
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 2rem;
+        }
+
+        @media (max-width: 800px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .glass-panel {
+            background: var(--surface-color);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+            transition: border-color 0.3s ease;
+        }
+
+        .glass-panel:hover {
+            border-color: var(--border-highlight);
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-top: 0;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        p.subtitle {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        input[type="text"],
+        textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            box-sizing: border-box;
+            transition: all 0.2s ease;
+        }
+
+        input[type="text"]:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: 100%;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-primary {
+            background-color: var(--accent);
+            color: white;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--accent-hover);
+            box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
+        }
+
+        .btn-secondary {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--text-main);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .btn-danger {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-danger:hover {
+            background-color: rgba(239, 68, 68, 0.2);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .action-buttons .btn {
+            width: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th {
+            padding: 1rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid var(--border);
+        }
+
+        td {
+            padding: 1rem;
+            font-size: 0.95rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background-color: rgba(255, 255, 255, 0.03);
+        }
+
+        .type-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .type-badge.warning {
+            background-color: rgba(245, 158, 11, 0.2);
+            color: #fbbf24;
+        }
+
+        .type-badge.critical {
+            background-color: rgba(239, 68, 68, 0.2);
+            color: #fca5a5;
+        }
+
+        .type-badge.info {
+            background-color: rgba(59, 130, 246, 0.2);
+            color: #93c5fd;
+        }
+
+        .loading, .error-msg, .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--text-muted);
+        }
+
+        .error-msg {
+            color: #fca5a5;
+        }
+        
+        .notification {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background-color: var(--accent);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            z-index: 1000;
+        }
+        
+        .notification.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Sidebar / Actions -->
+        <div class="sidebar">
+            <div class="glass-panel" style="margin-bottom: 2rem;">
+                <h1>IDS Control Panel</h1>
+                <p class="subtitle">System Monitor v2.0</p>
+                
+                <form id="addLogForm">
+                    <div class="form-group">
+                        <label for="logType">Intrusion Type</label>
+                        <input type="text" id="logType" name="type" placeholder="e.g. INTRUSION, WARNING" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="logDetails">Event Details</label>
+                        <textarea id="logDetails" name="details" placeholder="Describe the detected activity..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary" id="submitBtn">Add Log Entry</button>
+                </form>
+            </div>
+            
+            <div class="glass-panel">
+                <h2 style="margin-bottom: 1rem;">Quick Filters</h2>
+                <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                    <button class="btn btn-danger" id="showFailedBtn">Show Failed Logins</button>
+                    <button class="btn btn-secondary" id="sortBtn">Sort Logs Alphabetically</button>
+                    <button class="btn btn-secondary" id="resetBtn" style="opacity: 0.7;">Reset View</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content / Table -->
+        <div class="main-content">
+            <div class="glass-panel" style="min-height: 500px;">
+                <h2>System Logs <span id="logCount" style="font-size:0.9rem; color:var(--text-muted); font-weight:normal;"></span></h2>
+                
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width: 80px;">ID</th>
+                                <th style="width: 150px;">Type</th>
+                                <th>Details</th>
+                            </tr>
+                        </thead>
+                        <tbody id="logsTableBody">
+                            <tr>
+                                <td colspan="3" class="loading">Loading logs...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="notification" id="notification">Action completed successfully</div>
+
+    <script>
+        let allLogs = [];
+        let currentLogs = [];
+
+        const tableBody = document.getElementById('logsTableBody');
+        const logCount = document.getElementById('logCount');
+        const addLogForm = document.getElementById('addLogForm');
+        const submitBtn = document.getElementById('submitBtn');
+
+        // Fetch logs on load
+        async function fetchLogs() {
+            try {
+                tableBody.innerHTML = '<tr><td colspan="3" class="loading">Fetching data...</td></tr>';
+                const response = await fetch('/api/logs');
+                if (!response.ok) throw new Error('Failed to fetch logs');
+                
+                allLogs = await response.json();
+                currentLogs = [...allLogs];
+                renderLogs();
+            } catch (error) {
+                console.error(error);
+                tableBody.innerHTML = `<tr><td colspan="3" class="error-msg">Error loading logs: ${error.message}</td></tr>`;
+            }
+        }
+
+        // Determine badge color based on type
+        function getBadgeClass(type) {
+            const t = type.toLowerCase();
+            if (t.includes('intrusion') || t.includes('critical') || t.includes('error')) return 'critical';
+            if (t.includes('warning') || t.includes('failed')) return 'warning';
+            return 'info';
+        }
+
+        // Render logs to table
+        function renderLogs() {
+            logCount.innerText = `(${currentLogs.length} entries)`;
+            
+            if (currentLogs.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="3" class="empty-state">No logs found matching criteria.</td></tr>';
+                return;
+            }
+
+            tableBody.innerHTML = '';
+            currentLogs.forEach(log => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="color: var(--text-muted);">#${log.id}</td>
+                    <td><span class="type-badge ${getBadgeClass(log.type)}">${log.type}</span></td>
+                    <td style="line-height: 1.5;">${log.details}</td>
+                `;
+                tableBody.appendChild(tr);
+            });
+        }
+
+        // Handle Form Submission
+        addLogForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const type = document.getElementById('logType').value;
+            const details = document.getElementById('logDetails').value;
+            
+            submitBtn.disabled = true;
+            submitBtn.innerText = 'Adding...';
+
+            try {
+                const response = await fetch('/api/logs', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `type=${encodeURIComponent(type)}&details=${encodeURIComponent(details)}`
+                });
+
+                if (!response.ok) throw new Error('Failed to add log');
+
+                // Success
+                addLogForm.reset();
+                showNotification('Log added successfully');
+                await fetchLogs(); // Refresh
+                
+            } catch (error) {
+                console.error(error);
+                alert('Error adding log');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerText = 'Add Log Entry';
+            }
+        });
+
+        // Show Failed Logins
+        document.getElementById('showFailedBtn').addEventListener('click', () => {
+            currentLogs = allLogs.filter(log => 
+                log.details.toLowerCase().includes('failed login') || 
+                log.type.toLowerCase().includes('failed')
+            );
+            renderLogs();
+            showNotification('Filtered by failed logins');
+        });
+
+        // Sort Logs
+        document.getElementById('sortBtn').addEventListener('click', () => {
+            currentLogs.sort((a, b) => a.type.localeCompare(b.type));
+            renderLogs();
+            showNotification('Sorted alphabetically by type');
+        });
+
+        // Reset
+        document.getElementById('resetBtn').addEventListener('click', () => {
+            currentLogs = [...allLogs];
+            renderLogs();
+            showNotification('View reset');
+        });
+        
+        function showNotification(msg) {
+            const notif = document.getElementById('notification');
+            notif.innerText = msg;
+            notif.classList.add('show');
+            setTimeout(() => {
+                notif.classList.remove('show');
+            }, 3000);
+        }
+
+        // Initial fetch
+        fetchLogs();
+    </script>
+</body>
+</html>

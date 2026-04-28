@@ -1,0 +1,23 @@
+<web-app>
+
+    <servlet>
+        <servlet-name>ViewLogs</servlet-name>
+        <servlet-class>ViewLogsServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>ViewLogs</servlet-name>
+        <url-pattern>/viewLogs</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>LogsApi</servlet-name>
+        <servlet-class>LogsApiServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>LogsApi</servlet-name>
+        <url-pattern>/api/logs</url-pattern>
+    </servlet-mapping>
+
+</web-app>
