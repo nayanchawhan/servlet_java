@@ -21,15 +21,8 @@ public class ViewLogsServlet extends HttpServlet {
         try {
             Class.forName("org.postgresql.Driver");
 
-            String host = System.getenv("Hostname");
-            String port = System.getenv("Port");
-            String database = System.getenv("Database");
-            String username = System.getenv("Username");
-            String password = System.getenv("Password");
-            
-            String jdbcUrl = "jdbc:postgresql://" + host + ":" + port + "/" + database;
-            
-            con = DriverManager.getConnection(jdbcUrl, username, password);
+            con = DriverManager.getConnection(
+                "jdbc:postgresql://db:5432/intrusion_db", "postgres", "postgres");
 
             st = con.createStatement();
             rs = st.executeQuery("SELECT * FROM logs");
